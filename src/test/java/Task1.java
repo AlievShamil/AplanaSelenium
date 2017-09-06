@@ -19,6 +19,7 @@ public class Task1 {
     public void setUp() throws Exception {
         System.setProperty("webdriver.chrome.driver", "drv/chromedriver.exe");
         driver = new ChromeDriver();
+        driver.manage().window().fullscreen();
         baseUrl = "http://www.sberbank.ru/ru/person";
         driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
     }
@@ -26,19 +27,21 @@ public class Task1 {
     @Test
     public void testInsuranceTest2() throws Exception {
         driver.get(baseUrl + "/ru/person");
-        driver.findElement(By.cssSelector("button.header-offices__btn")).click();
-        new Select(driver.findElement(By.xpath("(//select[@name='region'])[2]"))).selectByVisibleText("Нижегородская область");
-        driver.findElement(By.cssSelector("button.header-offices__btn")).click();
+        driver.findElement(By.cssSelector("span.region-list__arrow")).click();
 
-        try {
-            assertEquals("Нижегородская область",
-                    driver.findElement(By.xpath(".//*[@id='main']/div/div/div/div/div/div/div[4]/div/div[2]/div/div/div[2]/div[1]/div/div[3]/div/div/a/span")).getText());
-        } catch (Error e) {
-            verificationErrors.append(e.toString());
-        }
-        driver.findElement(By.xpath(".//*[@id='main']/div/div/div/div/div/div/div[4]/div/div[2]/div/div/button")).click();
+        Wait<WebDriver> wait = new WebDriverWait(driver, 1, 3000);
 
-        WebElement webElem = driver.findElement(By.xpath("//*[@class='social social_section_person']//div"));
+        wait.until(ExpectedConditions.visibilityOf(
+                driver.findElement(By.xpath("//span[@class='region-list__arrow']"))
+        ));
+        driver.findElement(By.xpath("//a[contains(text(),'Нижегородская область')]")).click();
+
+        wait.until(ExpectedConditions.visibilityOf(
+                driver.findElement(By.xpath("//span[@class='region-list__name']"))
+        ));
+        assertEquals("Нижегородская область", driver.findElement(By.xpath("//span[@class='region-list__name']")).getText());
+
+        WebElement webElem = driver.findElement(By.xpath("//*[@class='sbrf-div-list-inner --area bp-area footer-social']"));
         ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", webElem);
 
         assertTrue(isElementPresent(By.xpath("//*[contains(@class,'icon_type_fb')]")));
@@ -47,8 +50,6 @@ public class Task1 {
         assertTrue(isElementPresent(By.xpath("//*[contains(@class,'icon_type_ins')]")));
         assertTrue(isElementPresent(By.xpath("//*[contains(@class,'icon_type_vk')]")));
         assertTrue(isElementPresent(By.xpath("//*[contains(@class,'icon_type_ok')]")));
-
-
     }
 
     @After

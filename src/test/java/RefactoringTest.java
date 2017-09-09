@@ -1,22 +1,41 @@
-import pages.scenario_2.*;
-
 import org.junit.Test;
+import pages.MainPage;
+import pages.PolicyPage;
+import pages.SendAppPage;
+import pages.TravelPage;
 
 import static org.junit.Assert.assertEquals;
 
-public class Scenario_2_RefactoringTest extends BaseTest {
+public class RefactoringTest extends BaseTest {
 
+    @Test
+    public void testIcons() throws Exception {
+        driver.get(baseUrl + "ru/person");
 
-//    @Test
+        MainPage mainPage = new MainPage(driver);
+        mainPage.selectRegion("Нижегородская область");
+        mainPage.checkRegion("Нижегородская область");
+        mainPage.scrollToFooter();
+
+        mainPage.checkSocialNetworkIcon(mainPage.facebook);
+        mainPage.checkSocialNetworkIcon(mainPage.twitter);
+        mainPage.checkSocialNetworkIcon(mainPage.youtube);
+        mainPage.checkSocialNetworkIcon(mainPage.instagram);
+        mainPage.checkSocialNetworkIcon(mainPage.vkontakte);
+        mainPage.checkSocialNetworkIcon(mainPage.odnoklassniki);
+    }
+
+    @Test
     public void testInsurance() throws Exception {
         driver.get(baseUrl + "ru/person");
+
         MainPage mainPage = new MainPage(driver);
         mainPage.selectMenuItem("Застраховать себя");
         mainPage.selectInsuranceItem("Страхование путешественников");
 
         TravelPage travelPage = new TravelPage(driver);
         travelPage.clickIssueBtn();
-        assertEquals("«Сбербанк» - Страхование путешественников",travelPage.getTitle());
+        assertEquals("«Сбербанк» - Страхование путешественников", travelPage.getTitle());
 
         for (String winHandle : driver.getWindowHandles()) {
             driver.switchTo().window(winHandle);
@@ -27,18 +46,18 @@ public class Scenario_2_RefactoringTest extends BaseTest {
         policyPage.clickIssueBtn();
 
         SendAppPage sendAppPage = new SendAppPage(driver);
-        sendAppPage.fillField("Surname","Medvedev");
-        sendAppPage.fillField("Name","Dmitry");
-        sendAppPage.fillField("Birth Date","01.01.1991");
-        sendAppPage.fillField("Фамилия","Путин");
-        sendAppPage.fillField("Имя","Владимир");
-        sendAppPage.fillField("Отчество","Владимирович");
-        sendAppPage.fillField("Дата рождения","02.02.1992");
+        sendAppPage.fillField("Surname", "Medvedev");
+        sendAppPage.fillField("Name", "Dmitry");
+        sendAppPage.fillField("Birth Date", "01.01.1991");
+        sendAppPage.fillField("Фамилия", "Путин");
+        sendAppPage.fillField("Имя", "Владимир");
+        sendAppPage.fillField("Отчество", "Владимирович");
+        sendAppPage.fillField("Дата рождения", "02.02.1992");
         sendAppPage.checkSex("Муж");
-        sendAppPage.fillField("Серия паспорта","1111");
-        sendAppPage.fillField("Номер паспорта","222222");
-        sendAppPage.fillField("Дата выдачи","07.07.2017");
-        sendAppPage.fillField("Кем выдан","он вам не Димон");
+        sendAppPage.fillField("Серия паспорта", "1111");
+        sendAppPage.fillField("Номер паспорта", "222222");
+        sendAppPage.fillField("Дата выдачи", "07.07.2017");
+        sendAppPage.fillField("Кем выдан", "он вам не Димон");
 
         sendAppPage.scrollViewAndClick();
 
@@ -56,5 +75,4 @@ public class Scenario_2_RefactoringTest extends BaseTest {
 
         sendAppPage.checkFieldErrorMessage("Заполнены не все обязательные поля");
     }
-
 }

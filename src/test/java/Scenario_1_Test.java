@@ -10,7 +10,7 @@ import org.openqa.selenium.support.ui.*;
 public class Scenario_1_Test extends BaseTest {
 
     @Ignore
-//    @Test
+    @Test
     public void testInsuranceTest2() throws Exception {
         driver.get(baseUrl + "ru/person");
         driver.findElement(By.cssSelector("span.region-list__arrow")).click();

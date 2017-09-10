@@ -11,7 +11,7 @@ import java.util.Collection;
 
 import static org.junit.Assert.assertEquals;
 
-//@RunWith(Parameterized.class)
+@RunWith(Parameterized.class)
 public class Scenario_2_Test extends BaseTest {
 
     @Parameterized.Parameters
@@ -25,10 +25,10 @@ public class Scenario_2_Test extends BaseTest {
     }
 
     @Parameterized.Parameter
-    public String insuredSurname; //only uppercase and English
+    public String insuredSurname;
 
     @Parameterized.Parameter(1)
-    public String insuredName; //only uppercase and English
+    public String insuredName;
 
     @Parameterized.Parameter(2)
     public String insuredBirthDate;
@@ -58,7 +58,7 @@ public class Scenario_2_Test extends BaseTest {
     public String issuePlace;
 
     @Ignore
-//    @Test
+    @Test
     public void testInsurance() throws Exception {
         driver.get(baseUrl + "ru/person");
         driver.findElement(

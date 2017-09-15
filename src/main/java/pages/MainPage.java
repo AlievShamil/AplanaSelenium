@@ -2,79 +2,101 @@ package pages;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static steps.BaseSteps.getDriver;
 
 public class MainPage extends BasePage {
 
     @FindBy(xpath = "//div[contains(@class,'header_more_nav')]")
-    WebElement menuItems;
+    private WebElement menuItems;
 
     @FindBy(xpath = "//div[@class='alt-menu-collapser__hidder']")
-    WebElement menuInsurance;
+    private WebElement menuInsurance;
 
     @FindBy(xpath = "//*[contains(@class,'icon_type_fb')]")
-    public WebElement facebook;
+    private WebElement facebook;
 
     @FindBy(xpath = "//*[contains(@class,'icon_type_tw')]")
-    public WebElement twitter;
+    private WebElement twitter;
 
     @FindBy(xpath = "//*[contains(@class,'icon_type_yt')]")
-    public WebElement youtube;
+    private WebElement youtube;
 
     @FindBy(xpath = "//*[contains(@class,'icon_type_ins')]")
-    public WebElement instagram;
+    private WebElement instagram;
 
     @FindBy(xpath = "//*[contains(@class,'icon_type_vk')]")
-    public WebElement vkontakte;
+    private WebElement vkontakte;
 
     @FindBy(xpath = "//*[contains(@class,'icon_type_ok')]")
-    public WebElement odnoklassniki;
+    private WebElement odnoklassniki;
 
-    @FindBy(xpath = "//a[@class='kit-link kit-link_color_black region-list__toggler']")
-    public WebElement region;
+    @FindBy(xpath = "//div[contains(@class,'header_contacts')]//a[contains(@class,'toggler')]")
+    public WebElement menuRegion;
+
+    @FindBy(xpath = "////span[@class='region-search-box__option']")
+    public WebElement regionItem;
 
     @FindBy(xpath = "//div[@class='region-list__modal-content']")
     public WebElement regionList;
 
-    public MainPage(WebDriver driver) {
-        PageFactory.initElements(driver, this);
-        this.driver = driver;
-        wait = new WebDriverWait(driver, 5, 1000);
+    private List<WebElement> elements = Arrays.asList(
+            facebook, twitter, youtube, instagram, vkontakte, odnoklassniki);
+
+    public MainPage() {
+        PageFactory.initElements(getDriver(), this);
     }
 
     public void selectMenuItem(String itemName) {
-        menuItems.findElement(By.xpath("//span[contains(@class,'multiline')]/*[contains(text(),'" + itemName + "')]")).click();
+        String subStr = itemName.substring(0, 17);
+        new WebDriverWait(getDriver(), 5, 1000).until(ExpectedConditions.visibilityOf(
+                menuItems.findElement(By.xpath("//span[contains(@class,'multiline')]/*[contains(text(),'" + subStr + "')]"))
+        )).click();
     }
 
     public void selectInsuranceItem(String itemName) {
         menuInsurance.findElement(By.xpath("//li[contains(@class,'item_leaf')]//a[contains(text(),'" + itemName + "')]")).click();
     }
 
-    public void selectRegion(String value) {
-        region.click();
-        wait.until(ExpectedConditions.visibilityOf(regionList));
-        regionList.findElement(By.xpath("//a[contains(text(),'" + value + "')]")).click();
+    public void selectRegion(String regionName) {
+        new WebDriverWait(getDriver(), 5, 1000).until(ExpectedConditions.visibilityOf(
+                regionList.findElement(By.xpath("//a[contains(text(),'" + regionName + "')]"))
+        )).click();
     }
 
     public void checkRegion(String value) {
-        wait.until(ExpectedConditions.invisibilityOf(region));
-        assertEquals(value, region.getText());
+        boolean staleElement = true;
+        while (staleElement) {
+            try {
+                assertEquals(value, menuRegion.getAttribute("title"));
+                staleElement = false;
+
+            } catch (StaleElementReferenceException e) {
+                staleElement = true;
+            }
+        }
     }
 
     public void scrollToFooter() {
-        WebElement element = driver.findElement(By.xpath("//*[@class='sbrf-div-list-inner --area bp-area footer-social']"));
-        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", element);
+        WebElement element = getDriver().findElement(By.xpath("//*[@class='sbrf-div-list-inner --area bp-area footer-social']"));
+        ((JavascriptExecutor) getDriver()).executeScript("arguments[0].scrollIntoView(true);", element);
     }
 
-    public void checkSocialNetworkIcon(WebElement element) {
-        assertTrue(element.isDisplayed());
+    public void checkElements() {
+        for (WebElement element : elements) {
+            assertTrue(element.isDisplayed());
+        }
     }
+
 }
